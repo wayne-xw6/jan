@@ -108,7 +108,7 @@ const WEB_BLOCK = [
 function environmentBlock(env: CoworkEnvironment): string {
   const lines = ['# Environment', '']
   if (env.os) lines.push(`- OS: ${env.os}${env.arch ? ` (${env.arch})` : ''}`)
-  if (env.appVersion) lines.push(`- App: Jan v${env.appVersion} (desktop)`)
+  if (env.appVersion) lines.push(`- App: KnowIsle v${env.appVersion} (desktop)`)
   lines.push(`- Today's date: ${env.date}`)
   if (env.locale) lines.push(`- User locale: ${env.locale}`)
   lines.push(

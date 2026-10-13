@@ -40,7 +40,7 @@ jobs:
         run: ./scripts/package-personal-windows.ps1
       - uses: actions/upload-artifact@v4
         with:
-          name: Jan-Knowledge-Windows-x64
+          name: KnowIsle-Windows-x64
           path: |
             dist-personal/*.exe
             dist-personal/*.zip

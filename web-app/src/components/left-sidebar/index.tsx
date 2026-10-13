@@ -38,7 +38,7 @@ export function LeftSidebar() {
       <Sidebar variant="floating" collapsible="offcanvas">
         <SidebarHeader className="flex px-1">
           <div className={cn("flex items-center w-full justify-between", reserveLeft && "justify-end")}>
-            {!reserveLeft && <span className="ml-2 font-medium font-studio">Jan Knowledge</span>}
+            {!reserveLeft && <span className="ml-2 flex items-center gap-2 font-medium"><img src="/images/knowisle-logo.png" alt="" className="size-7 rounded-lg" />知屿 · KnowIsle</span>}
             <div className="flex items-center">
               {isLeftPanelOpen && <DownloadManagement />}
               <SidebarTrigger className="text-muted-foreground rounded-full hover:bg-sidebar-foreground/8! -mt-0.5 relative z-50 ml-0.5" />

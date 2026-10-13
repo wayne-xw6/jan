@@ -6,9 +6,9 @@ $output = [IO.Path]::GetFullPath((Join-Path $projectRoot $OutputDirectory))
 if (-not $output.StartsWith($projectRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
     throw 'Output must be inside this project.'
 }
-$portable = Join-Path $output "Jan-Knowledge-$Version-portable"
+$portable = Join-Path $output "KnowIsle-$Version-portable"
 if (Test-Path -LiteralPath $portable) { throw "Output already exists: $portable. Choose a new output directory." }
-$binary = Join-Path $release 'Jan-Desktop.exe'
+$binary = Join-Path $release 'KnowIsle.exe'
 $resources = Join-Path $projectRoot 'src-tauri/resources'
 foreach ($required in @($binary, (Join-Path $resources 'bin/jan-llama-worker.exe'))) {
     if (-not (Test-Path -LiteralPath $required) -or (Get-Item -LiteralPath $required).Length -lt 1024) { throw "Missing or stub build output: $required" }
@@ -24,7 +24,7 @@ foreach ($sidecar in @('bun', 'uv')) {
     if (-not (Test-Path -LiteralPath $source) -or (Get-Item -LiteralPath $source).Length -lt 1024) { throw "Missing or stub sidecar: $source" }
     Copy-Item -LiteralPath $source -Destination (Join-Path $portable "$sidecar.exe")
 }
-Set-Content -LiteralPath (Join-Path $portable 'portable.flag') -Value 'Jan Knowledge portable profile v1'
+Set-Content -LiteralPath (Join-Path $portable 'portable.flag') -Value 'KnowIsle portable profile v1'
 Copy-Item -LiteralPath (Join-Path $projectRoot 'LICENSE') -Destination $portable
 Copy-Item -LiteralPath (Join-Path $projectRoot 'PERSONAL-README.md') -Destination (Join-Path $portable 'README.md')
 foreach ($installer in $installers) { Copy-Item -LiteralPath $installer.FullName -Destination $output }

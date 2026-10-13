@@ -277,16 +277,16 @@ export interface EmbeddingResponse {
  */
 export interface EmbeddingEngine {
   /** Embeds each text, in input order. */
-  embed(texts: string[]): Promise<EmbeddingResponse>
+  embed(texts: string[], modelId?: string): Promise<EmbeddingResponse>
 
   /**
    * The embedding model's context window in tokens, or undefined when no
    * embedding model is available to ask.
    */
-  getEmbeddingContextSize(): Promise<number | undefined>
+  getEmbeddingContextSize(modelId?: string): Promise<number | undefined>
 
   /** Token counts from the embedding model's own tokenizer, in input order. */
-  countEmbeddingTokens(texts: string[]): Promise<number[]>
+  countEmbeddingTokens(texts: string[], modelId?: string): Promise<number[]>
 }
 
 function hasMethod(engine: unknown, name: keyof EmbeddingEngine): boolean {

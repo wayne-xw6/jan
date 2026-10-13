@@ -57,6 +57,8 @@ macro_rules! invoke_commands_with_extras {
         core::app::commands::get_user_home_path,
         core::app::commands::update_app_configuration,
         core::app::commands::get_jan_data_folder_path,
+        core::app::commands::knowledge_catalog_get,
+        core::app::commands::knowledge_catalog_set,
         core::app::commands::get_configuration_file_path,
         core::app::commands::default_data_folder_path,
         core::app::commands::change_app_data_folder,
@@ -258,6 +260,7 @@ async fn handle_graceful_exit<R: tauri::Runtime>(
     tauri::mobile_entry_point
 )]
 pub fn run() {
+    crate::core::app::paths::initialize_personal_profile();
     // Installed before any plugin: the toolset crate owns no config format, so
     // the `execute_tool` IPC command can only reach a user's `[[hooks]]`
     // through a resolver the app hands it. Without this the desktop is the one

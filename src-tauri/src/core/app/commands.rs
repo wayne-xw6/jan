@@ -6,10 +6,10 @@ use std::{
 use tauri::{AppHandle, Runtime, State};
 
 use super::constants::{CONFIGURATION_FILE_NAME, TAURI_BUNDLE_IDENTIFIER};
-use super::models::AppConfiguration;
-use super::paths;
 #[cfg(not(feature = "cli"))]
 use super::helpers::copy_dir_recursive;
+use super::models::AppConfiguration;
+use super::paths;
 #[cfg(not(feature = "cli"))]
 use crate::core::state::AppState;
 
@@ -179,6 +179,15 @@ pub fn resolve_jan_data_folder() -> PathBuf {
 pub fn get_app_configurations<R: Runtime>(app_handle: tauri::AppHandle<R>) -> AppConfiguration {
     let mut app_default_configuration = AppConfiguration::default();
 
+    // Portable profiles may have moved drives since the previous launch.
+    // Resolve from the executable on every run instead of a persisted path.
+    if let Ok(folder) = std::env::var("JAN_DATA_FOLDER") {
+        if Path::new(&folder).is_absolute() {
+            app_default_configuration.data_folder = folder;
+            return app_default_configuration;
+        }
+    }
+
     if std::env::var("CI").unwrap_or_default() == "e2e" {
         return app_default_configuration;
     }
@@ -285,6 +294,44 @@ pub fn get_configuration_file_path<R: Runtime>(app_handle: tauri::AppHandle<R>) 
         log::warn!("Legacy app config migration skipped: {err}");
     }
     app_path.join(CONFIGURATION_FILE_NAME)
+}
+
+/// Knowledge generations need a durable commit before deleting an old index;
+/// the regular settings store is debounced and cannot provide that contract.
+#[cfg(not(feature = "cli"))]
+#[tauri::command]
+pub fn knowledge_catalog_get<R: Runtime>(
+    app_handle: tauri::AppHandle<R>,
+) -> Result<Option<String>, String> {
+    let path = get_jan_data_folder_path(app_handle).join("knowledge-catalog.json");
+    match fs::read_to_string(path) {
+        Ok(value) => Ok(Some(value)),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(None),
+        Err(error) => Err(error.to_string()),
+    }
+}
+
+#[cfg(not(feature = "cli"))]
+#[tauri::command]
+pub fn knowledge_catalog_set<R: Runtime>(
+    app_handle: tauri::AppHandle<R>,
+    value: String,
+) -> Result<(), String> {
+    use std::io::Write;
+    let parsed: serde_json::Value = serde_json::from_str(&value).map_err(|e| e.to_string())?;
+    if !parsed.is_array() {
+        return Err("Knowledge catalog must be an array".into());
+    }
+    let root = get_jan_data_folder_path(app_handle);
+    fs::create_dir_all(&root).map_err(|e| e.to_string())?;
+    let path = root.join("knowledge-catalog.json");
+    let temporary = root.join("knowledge-catalog.json.tmp");
+    let mut file = fs::File::create(&temporary).map_err(|e| e.to_string())?;
+    file.write_all(value.as_bytes())
+        .map_err(|e| e.to_string())?;
+    file.sync_all().map_err(|e| e.to_string())?;
+    drop(file);
+    fs::rename(temporary, path).map_err(|e| e.to_string())
 }
 
 #[cfg(not(feature = "cli"))]

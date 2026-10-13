@@ -1,0 +1,52 @@
+name: Personal Windows packages
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-2025
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Prepare build tools
+        shell: pwsh
+        run: |
+          choco install make -y --no-progress
+          Add-Content $env:GITHUB_PATH 'C:\ProgramData\chocolatey\bin'
+          Add-Content $env:GITHUB_PATH 'C:\Program Files\Git\bin'
+          corepack enable
+          corepack prepare yarn@4.5.3 --activate
+      - name: Set up bundled engine
+        uses: ./.github/actions/setup-engine-toolchain
+        with:
+          variant: vulkan
+      - name: Build personal desktop
+        shell: bash
+        env:
+          JAN_ENGINE_VARIANT: vulkan
+        run: make build
+      - name: Test knowledge logic
+        shell: bash
+        run: yarn vitest run --project @janhq/web-app web-app/src/lib/__tests__/knowledge-domain.test.ts web-app/src/lib/__tests__/knowledge.test.ts
+      - name: Package installer and portable profile
+        shell: pwsh
+        run: ./scripts/package-personal-windows.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Jan-Knowledge-Windows-x64
+          path: |
+            dist-personal/*.exe
+            dist-personal/*.zip
+            dist-personal/SHA256SUMS.txt
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: engine-build-log
+          path: src-tauri/target/engine-build.log
+          if-no-files-found: ignore

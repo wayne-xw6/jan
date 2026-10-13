@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SystemMonitorRouteImport } from './routes/system-monitor'
 import { Route as LogsRouteImport } from './routes/logs'
+import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as CoworkRouteImport } from './routes/cowork'
 import { Route as ArtifactsRouteImport } from './routes/artifacts'
 import { Route as IndexRouteImport } from './routes/index'
@@ -44,6 +45,11 @@ const SystemMonitorRoute = SystemMonitorRouteImport.update({
 const LogsRoute = LogsRouteImport.update({
   id: '/logs',
   path: '/logs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KnowledgeRoute = KnowledgeRouteImport.update({
+  id: '/knowledge',
+  path: '/knowledge',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CoworkRoute = CoworkRouteImport.update({
@@ -172,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/artifacts': typeof ArtifactsRoute
   '/cowork': typeof CoworkRoute
+  '/knowledge': typeof KnowledgeRoute
   '/logs': typeof LogsRoute
   '/system-monitor': typeof SystemMonitorRoute
   '/hub/$modelId': typeof HubModelIdRoute
@@ -200,6 +207,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/artifacts': typeof ArtifactsRoute
   '/cowork': typeof CoworkRoute
+  '/knowledge': typeof KnowledgeRoute
   '/logs': typeof LogsRoute
   '/system-monitor': typeof SystemMonitorRoute
   '/hub/$modelId': typeof HubModelIdRoute
@@ -229,6 +237,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/artifacts': typeof ArtifactsRoute
   '/cowork': typeof CoworkRoute
+  '/knowledge': typeof KnowledgeRoute
   '/logs': typeof LogsRoute
   '/system-monitor': typeof SystemMonitorRoute
   '/hub/$modelId': typeof HubModelIdRoute
@@ -259,6 +268,7 @@ export interface FileRouteTypes {
     | '/'
     | '/artifacts'
     | '/cowork'
+    | '/knowledge'
     | '/logs'
     | '/system-monitor'
     | '/hub/$modelId'
@@ -287,6 +297,7 @@ export interface FileRouteTypes {
     | '/'
     | '/artifacts'
     | '/cowork'
+    | '/knowledge'
     | '/logs'
     | '/system-monitor'
     | '/hub/$modelId'
@@ -315,6 +326,7 @@ export interface FileRouteTypes {
     | '/'
     | '/artifacts'
     | '/cowork'
+    | '/knowledge'
     | '/logs'
     | '/system-monitor'
     | '/hub/$modelId'
@@ -344,6 +356,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ArtifactsRoute: typeof ArtifactsRoute
   CoworkRoute: typeof CoworkRoute
+  KnowledgeRoute: typeof KnowledgeRoute
   LogsRoute: typeof LogsRoute
   SystemMonitorRoute: typeof SystemMonitorRoute
   HubModelIdRoute: typeof HubModelIdRoute
@@ -383,6 +396,13 @@ declare module '@tanstack/react-router' {
       path: '/logs'
       fullPath: '/logs'
       preLoaderRoute: typeof LogsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/knowledge': {
+      id: '/knowledge'
+      path: '/knowledge'
+      fullPath: '/knowledge'
+      preLoaderRoute: typeof KnowledgeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cowork': {
@@ -560,6 +580,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ArtifactsRoute: ArtifactsRoute,
   CoworkRoute: CoworkRoute,
+  KnowledgeRoute: KnowledgeRoute,
   LogsRoute: LogsRoute,
   SystemMonitorRoute: SystemMonitorRoute,
   HubModelIdRoute: HubModelIdRoute,

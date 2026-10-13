@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/sidebar'
 import { cn } from '@/lib/utils'
 import { useTitlebarLayout } from '@/stores/titlebar-layout-store'
-import { useLocation } from '@tanstack/react-router'
+import { Link, useLocation } from '@tanstack/react-router'
 import { isCoworkRoute, route } from '@/constants/routes'
 import { isCoworkEnabled } from '@/lib/version'
 
@@ -38,13 +38,14 @@ export function LeftSidebar() {
       <Sidebar variant="floating" collapsible="offcanvas">
         <SidebarHeader className="flex px-1">
           <div className={cn("flex items-center w-full justify-between", reserveLeft && "justify-end")}>
-            {!reserveLeft && <span className="ml-2 font-medium font-studio">Jan</span>}
+            {!reserveLeft && <span className="ml-2 font-medium font-studio">Jan Knowledge</span>}
             <div className="flex items-center">
               {isLeftPanelOpen && <DownloadManagement />}
               <SidebarTrigger className="text-muted-foreground rounded-full hover:bg-sidebar-foreground/8! -mt-0.5 relative z-50 ml-0.5" />
             </div>
           </div>
           <NavTabs surfacePath={surfacePath} />
+          <Link to="/knowledge" className="rounded-md px-3 py-2 text-sm hover:bg-sidebar-foreground/8">个人知识库</Link>
           {isCowork ? <NavCowork /> : <NavMain />}
         </SidebarHeader>
         <SidebarContent className="mask-b-from-95% mask-t-from-98%">

@@ -2838,11 +2838,19 @@ export default class llamacpp_extension extends AIEngine implements EmbeddingEng
    * Shared by embed() and getEmbeddingContextSize() so both agree on which
    * model is "the" embedding model.
    */
-  private async ensureEmbeddingModelLoaded(): Promise<SessionInfo> {
+  private async ensureEmbeddingModelLoaded(modelId?: string): Promise<SessionInfo> {
     const downloadedModelList = await this.list()
     const installedEmbedding = downloadedModelList.filter(
       (m) => (m as any).embedding === true
     )
+    // Knowledge bases pin their embedder. Never silently substitute another
+    // model, even one with the same vector dimension.
+    if (modelId) {
+      if (!installedEmbedding.some((m) => m.id === modelId)) {
+        throw new Error(`Embedding model "${modelId}" is not installed. Import its GGUF in Model Providers.`)
+      }
+      return (await this.findSessionByModel(modelId)) ?? await this.load(modelId, undefined, true)
+    }
     const hasMini = downloadedModelList.some(
       (m) => m.id === FALLBACK_EMBEDDING_MODEL_ID
     )
@@ -2887,8 +2895,8 @@ export default class llamacpp_extension extends AIEngine implements EmbeddingEng
    * models). Used by RAG ingestion to size chunks so they don't exceed the
    * model's n_ctx (e.g. sentence-transformer-mini natively caps at 256).
    */
-  async getEmbeddingContextSize(): Promise<number | undefined> {
-    const sInfo = await this.ensureEmbeddingModelLoaded()
+  async getEmbeddingContextSize(modelId?: string): Promise<number | undefined> {
+    const sInfo = await this.ensureEmbeddingModelLoaded(modelId)
     const props = await this.getModelProps(sInfo.model_id)
     return props?.nCtx
   }
@@ -2900,8 +2908,8 @@ export default class llamacpp_extension extends AIEngine implements EmbeddingEng
    * a hard guarantee against exceed_context_size_error should verify with
    * this rather than estimating from character length.
    */
-  async countEmbeddingTokens(texts: string[]): Promise<number[]> {
-    const sInfo = await this.ensureEmbeddingModelLoaded()
+  async countEmbeddingTokens(texts: string[], modelId?: string): Promise<number[]> {
+    const sInfo = await this.ensureEmbeddingModelLoaded(modelId)
     const counts: number[] = []
     for (const text of texts) {
       const res = await fetch(`http://localhost:${sInfo.port}/tokenize`, {
@@ -2945,8 +2953,8 @@ export default class llamacpp_extension extends AIEngine implements EmbeddingEng
     return budget
   }
 
-  async embed(text: string[]): Promise<EmbeddingResponse> {
-    const sInfo = await this.ensureEmbeddingModelLoaded()
+  async embed(text: string[], modelId?: string): Promise<EmbeddingResponse> {
+    const sInfo = await this.ensureEmbeddingModelLoaded(modelId)
     const batches = buildEmbedBatches(text, await this.embedBatchBudget(sInfo))
 
     const attemptRequest = async (

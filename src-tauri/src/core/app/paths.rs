@@ -50,6 +50,30 @@ use tauri::{AppHandle, Manager, Runtime};
 /// not `%APPDATA%`.
 const DATA_ROOT_ENV: &str = "JAN_DATA_ROOT";
 
+/// Isolate the personal fork before any plugin resolves a path. A marker next
+/// to the executable selects a movable profile; no shell launcher is needed.
+pub fn initialize_personal_profile() {
+    let portable = std::env::current_exe().ok().and_then(|exe| {
+        let directory = exe.parent()?;
+        directory
+            .join("portable.flag")
+            .is_file()
+            .then(|| directory.join("data"))
+    });
+    let root = portable
+        .clone()
+        .or_else(env_data_dir)
+        .or_else(|| dirs::data_dir().map(|dir| dir.join("JanKnowledge")));
+    if let Some(root) = root {
+        std::env::set_var(DATA_ROOT_ENV, &root);
+        std::env::set_var("APP_NAME", "Jan Knowledge");
+        if portable.is_some() {
+            std::env::set_var("JAN_DATA_FOLDER", root.join("Jan Knowledge").join("data"));
+            std::env::set_var("WEBVIEW2_USER_DATA_FOLDER", root.join("webview"));
+        }
+    }
+}
+
 /// The rules for reading [`DATA_ROOT_ENV`], split out from the lookup so the
 /// validation is testable without touching the process environment.
 ///

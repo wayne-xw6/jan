@@ -46,7 +46,6 @@ function KnowledgePage() {
     void run(refresh)
     return () => abort.current?.abort()
     // The service is initialized before routes mount.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   const choose = (id: string) => {
     setSelected(id); setHits([]); setAnswer('')
@@ -57,6 +56,7 @@ function KnowledgePage() {
     setHits([]); setAnswer('')
   }
   const search = async (generate: boolean) => {
+    setHits([]); setAnswer('')
     const results = await knowledge.search(selected, question, limit, threshold)
     setHits(results); setAnswer('')
     if (generate) {
@@ -116,7 +116,7 @@ function KnowledgePage() {
           <label>最低相似度 <select value={threshold} disabled={busy} onChange={(e) => setThreshold(Number(e.target.value))}>{[0, 0.15, 0.25, 0.4, 0.6].map((n) => <option key={n}>{n}</option>)}</select></label>
           <Button variant="outline" disabled={busy || !active?.collection || !question.trim()} onClick={() => void run(() => search(false))}>检索片段</Button>
           <Button disabled={busy || !active?.collection || !chatModel || !question.trim()} onClick={() => void run(() => search(true))}>基于知识库回答</Button>
-          {busy && <Button variant="ghost" onClick={() => abort.current?.abort()}>停止生成</Button>}
+          {busy && abort.current && <Button variant="ghost" onClick={() => abort.current?.abort()}>停止生成</Button>}
         </div>
         {answer && <article className="whitespace-pre-wrap rounded-lg bg-muted p-4 leading-7">{answer}</article>}
         {hits.map((hit, i) => <details key={hit.id} className="rounded-lg border p-3" open>

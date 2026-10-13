@@ -11,7 +11,7 @@ if (Test-Path -LiteralPath $portable) { throw "Output already exists: $portable.
 $binary = Join-Path $release 'Jan-Desktop.exe'
 $resources = Join-Path $projectRoot 'src-tauri/resources'
 foreach ($required in @($binary, (Join-Path $resources 'bin/jan-llama-worker.exe'))) {
-    if (-not (Test-Path -LiteralPath $required)) { throw "Missing build output: $required" }
+    if (-not (Test-Path -LiteralPath $required) -or (Get-Item -LiteralPath $required).Length -lt 1024) { throw "Missing or stub build output: $required" }
 }
 $installers = @(Get-ChildItem -LiteralPath (Join-Path $release 'bundle/nsis') -Filter '*.exe')
 if ($installers.Count -eq 0) { throw 'NSIS installer is missing.' }
@@ -21,7 +21,7 @@ Copy-Item -LiteralPath $resources -Destination (Join-Path $portable 'resources')
 # externalBin sidecars are installed alongside the app, without target suffix.
 foreach ($sidecar in @('bun', 'uv')) {
     $source = Join-Path $resources "bin/$sidecar-x86_64-pc-windows-msvc.exe"
-    if (-not (Test-Path -LiteralPath $source)) { throw "Missing sidecar: $source" }
+    if (-not (Test-Path -LiteralPath $source) -or (Get-Item -LiteralPath $source).Length -lt 1024) { throw "Missing or stub sidecar: $source" }
     Copy-Item -LiteralPath $source -Destination (Join-Path $portable "$sidecar.exe")
 }
 Set-Content -LiteralPath (Join-Path $portable 'portable.flag') -Value 'Jan Knowledge portable profile v1'

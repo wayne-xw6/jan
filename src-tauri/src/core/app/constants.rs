@@ -63,7 +63,7 @@ mod tests {
 
     #[test]
     fn tauri_bundle_identifier_is_stable() {
-        assert_eq!(TAURI_BUNDLE_IDENTIFIER, "jan.ai.app");
+        assert_eq!(TAURI_BUNDLE_IDENTIFIER, "io.github.wayne-xw6.jan-knowledge");
     }
 
     #[test]

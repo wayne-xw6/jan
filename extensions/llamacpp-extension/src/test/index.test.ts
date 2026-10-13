@@ -1154,6 +1154,38 @@ describe('verifyGpuOffload', () => {
   })
 })
 
+describe('knowledge base pinned embedding models', () => {
+  afterEach(() => vi.restoreAllMocks())
+
+  it('loads the requested embedder through the managed engine', async () => {
+    const extension = new llamacpp_extension()
+    vi.spyOn(extension, 'list').mockResolvedValue([{ id: 'bge-m3', embedding: true }] as never)
+    vi.spyOn(extension, 'findSessionByModel').mockResolvedValue(undefined as never)
+    const session = { model_id: 'bge-m3', port: 1234 }
+    const load = vi.spyOn(extension, 'load').mockResolvedValue(session as never)
+    expect(await extension['ensureEmbeddingModelLoaded']('bge-m3')).toBe(session)
+    expect(load).toHaveBeenCalledWith('bge-m3', undefined, true)
+  })
+
+  it('never falls back to MiniLM for a missing pinned model', async () => {
+    const extension = new llamacpp_extension()
+    vi.spyOn(extension, 'list').mockResolvedValue([{ id: 'sentence-transformer-mini', embedding: true }] as never)
+    const load = vi.spyOn(extension, 'load')
+    await expect(extension['ensureEmbeddingModelLoaded']('missing')).rejects.toThrow('not installed')
+    expect(load).not.toHaveBeenCalled()
+  })
+
+  it('reuses the managed embedding session', async () => {
+    const extension = new llamacpp_extension()
+    vi.spyOn(extension, 'list').mockResolvedValue([{ id: 'bge-m3', embedding: true }] as never)
+    const session = { model_id: 'bge-m3', port: 1234 }
+    vi.spyOn(extension, 'findSessionByModel').mockResolvedValue(session as never)
+    const load = vi.spyOn(extension, 'load')
+    expect(await extension['ensureEmbeddingModelLoaded']('bge-m3')).toBe(session)
+    expect(load).not.toHaveBeenCalled()
+  })
+})
+
 describe('bootstrapDefaultEmbedder failure reporting', () => {
   let extension: llamacpp_extension
 

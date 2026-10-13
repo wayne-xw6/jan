@@ -2,7 +2,6 @@
 
 个人本地知识库与 AI 问答桌面应用。名称寓意：把散落的资料整理为可探索的知识岛屿。
 
-- 中文名：Isle
 - 名称：Isle
 - 可执行文件：Isle.exe
 - 应用标识：io.github.wayne-xw6.isle

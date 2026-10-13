@@ -63,12 +63,12 @@ pub fn initialize_personal_profile() {
     let root = portable
         .clone()
         .or_else(env_data_dir)
-        .or_else(|| dirs::data_dir().map(|dir| dir.join("KnowIsle")));
+        .or_else(|| dirs::data_dir().map(|dir| dir.join("Isle")));
     if let Some(root) = root {
         std::env::set_var(DATA_ROOT_ENV, &root);
-        std::env::set_var("APP_NAME", "KnowIsle");
+        std::env::set_var("APP_NAME", "Isle");
         if portable.is_some() {
-            std::env::set_var("JAN_DATA_FOLDER", root.join("KnowIsle").join("data"));
+            std::env::set_var("JAN_DATA_FOLDER", root.join("Isle").join("data"));
             std::env::set_var("WEBVIEW2_USER_DATA_FOLDER", root.join("webview"));
         }
     }

@@ -57,7 +57,7 @@ afterEach(() => {
 it('shows the Jan label on Windows and Linux with window buttons on the right', () => {
   render(<LeftSidebar />)
 
-  expect(screen.getByText('知屿 · KnowIsle')).toBeInTheDocument()
+  expect(screen.getByText('Isle')).toBeInTheDocument()
 })
 
 // The traffic lights own the top-left on macOS (#8943).
@@ -65,12 +65,12 @@ it('hides the Jan label on macOS', () => {
   vi.stubGlobal('IS_MACOS', true)
   render(<LeftSidebar />)
 
-  expect(screen.queryByText('知屿 · KnowIsle')).not.toBeInTheDocument()
+  expect(screen.queryByText('Isle')).not.toBeInTheDocument()
 })
 
 it('hides the Jan label when a Linux desktop puts window buttons on the left', () => {
   titlebar.left = ['close', 'minimize', 'maximize']
   render(<LeftSidebar />)
 
-  expect(screen.queryByText('知屿 · KnowIsle')).not.toBeInTheDocument()
+  expect(screen.queryByText('Isle')).not.toBeInTheDocument()
 })

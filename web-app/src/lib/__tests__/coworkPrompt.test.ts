@@ -99,7 +99,7 @@ describe('buildCoworkSystemPrompt', () => {
     )
     expect(p).toContain('# Environment')
     expect(p).toContain('- OS: linux (x86_64)')
-    expect(p).toContain('- App: KnowIsle v0.7.0 (desktop)')
+    expect(p).toContain('- App: Isle v0.7.0 (desktop)')
     expect(p).toContain("- Today's date: Tue Sep 02 2026")
     expect(p).toContain('- User locale: en-US')
     expect(buildCoworkSystemPrompt(opts())).not.toContain('# Environment')

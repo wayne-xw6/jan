@@ -1,4 +1,4 @@
-# 知屿 · KnowIsle
+# Isle
 
 基于 janhq/jan，保留原项目 MIT 许可。个人 fork：<https://github.com/wayne-xw6/jan>。
 
@@ -26,7 +26,7 @@
 
 安装版：运行 NSIS `*-setup.exe`。个人版应用标识及配置根目录与原 Jan 隔离；禁止从 Jan 官方更新源覆盖个人版。
 
-便携版：解压整个 `KnowIsle-*-portable.zip`，双击 `KnowIsle.exe`。必须保留同目录的 `portable.flag`、`resources`、bun.exe、uv.exe。数据和 WebView2 profile 保存于解压目录的 `data` 内。移动前完全退出应用，再移动整个文件夹。
+便携版：解压整个 `Isle-*-portable.zip`，双击 `Isle.exe`。必须保留同目录的 `portable.flag`、`resources`、bun.exe、uv.exe。数据和 WebView2 profile 保存于解压目录的 `data` 内。移动前完全退出应用，再移动整个文件夹。
 
 模型可在应用内下载，或从设置导入。外部导入模型引用原路径；跨盘或跨电脑移动时需重新导入，或使用应用管理的下载模型。Windows 凭据不能保证跨 Windows 用户迁移。目标系统需有 WebView2 Runtime；安装版可下载安装，便携版使用系统已有 Runtime。模型权重不随 ZIP 分发。
 
@@ -34,7 +34,7 @@
 
 依赖：Node.js 22、Yarn 4.5.3、Rust、MSVC C++ 工具、CMake、Ninja、Git Bash、make；GPU 通用版本使用 Vulkan SDK。
 
-GitHub Actions：手动运行 `Personal Windows packages`，成功后下载 `KnowIsle-Windows-x64` artifact，内含安装 EXE、便携 ZIP、SHA256SUMS。构建使用本 fork 的源码和内置引擎，不依赖上游签名证书，产物未做 Authenticode 签名。
+GitHub Actions：手动运行 `Personal Windows packages`，成功后下载 `Isle-Windows-x64` artifact，内含安装 EXE、便携 ZIP、SHA256SUMS。构建使用本 fork 的源码和内置引擎，不依赖上游签名证书，产物未做 Authenticode 签名。
 
 本地（具备工具链的 Git Bash）：
 

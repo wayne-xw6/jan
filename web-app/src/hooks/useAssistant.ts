@@ -29,7 +29,7 @@ const setLastUsedAssistantId = (assistantId: string) => {
 
 export const defaultAssistant: Assistant = {
   id: 'jan',
-  name: '知屿',
+  name: 'Isle',
   created_at: 1747029866.542,
   parameters: {},
   avatar: '👋',

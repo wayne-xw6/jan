@@ -12,14 +12,14 @@ edition = "2021"
 # `Option::is_none_or` in agent/loop.rs.
 rust-version = "1.88"
 resolver = "2"
-default-run = "KnowIsle"
+default-run = "Isle"
 
 [lib]
 name = "app_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [[bin]]
-name = "KnowIsle"
+name = "Isle"
 path = "src/main.rs"
 required-features = ["desktop"]
 
